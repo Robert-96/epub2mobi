@@ -24,8 +24,8 @@ class EbookConverter:
     """
 
     def __init__(self, inputpath, outputpath=None, timeout=None):
-        self.inputpath  = pathlib.Path(inputpath)
-        self.outputpath =  pathlib.Path(outputpath) if outputpath else self.inputpath.with_suffix('.mobi')
+        self.inputpath = pathlib.Path(inputpath)
+        self.outputpath = pathlib.Path(outputpath) if outputpath else self.inputpath.with_suffix('.mobi')
         self.timeout = timeout
 
         if not self.inputpath.exists():

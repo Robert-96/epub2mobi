@@ -56,6 +56,9 @@ def convert_task(task, filepath, outputpath):
     except Warning as ex:
         task.update(Status.WARNING)
         console.print(str(task))
+
+        console.print("    {}: [yellow bold]{}[/yellow bold]".format(type(ex).__name__, ex))
+        console.print()
     except Exception as ex:
         task.update(Status.ERROR)
         console.print(str(task))
@@ -65,7 +68,9 @@ def convert_task(task, filepath, outputpath):
 
 
 def convert_file(inputpath, outputpath=None):
-    console.print('[green]Convert [bold]{}[/bold] to mobi ...[/green]'.format(click.format_filename(inputpath, shorten=True)))
+    console.print('[green]Convert [bold]{}[/bold] to mobi ...[/green]'.format(
+        click.format_filename(inputpath, shorten=True))
+    )
     console.print()
 
     epub2mobi(inputpath, outputpath=outputpath)
@@ -73,7 +78,9 @@ def convert_file(inputpath, outputpath=None):
 
 def convert_tree(inputpath, outputpath=None, max_workers=5):
     console.clear()
-    console.print('[green]Convert all epub files from [bold]{}[/bold] to mobi ...[/green]'.format(click.format_filename(inputpath, shorten=True)))
+    console.print('[green]Convert all epub files from [bold]{}[/bold] to mobi ...[/green]'.format(
+        click.format_filename(inputpath, shorten=True))
+    )
     console.print()
 
     index = 0
@@ -105,7 +112,8 @@ def convert_tree(inputpath, outputpath=None, max_workers=5):
 @click.argument('input', type=click.Path(exists=True, file_okay=True, dir_okay=True))
 @click.option('--debug', is_flag=True, help='Enable logging.')
 @click.option('--output', type=click.Path(exists=False, file_okay=True, dir_okay=True), help='The output path.')
-@click.option('--max-workers', type=int, default=4, help='The max number of worker threads to execute the task asynchronously.')
+@click.option('--max-workers', type=int, default=4,
+              help='The max number of worker threads to execute the task asynchronously.')
 def cli(input, output, debug, max_workers):
     """Convert epub files to mobi.
 
