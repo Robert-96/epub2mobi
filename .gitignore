@@ -136,3 +136,6 @@ dmypy.json
 
 # MacOS
 .DS_Store
+
+# Mobi
+*.mobi

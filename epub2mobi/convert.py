@@ -29,12 +29,12 @@ class EbookConverter:
         self.timeout = timeout
 
         if not self.inputpath.exists():
-            raise FileNotFoundError()
+            raise FileNotFoundError('Path: {} doesn\'t exists.'.format(self.inputpath))
         if self.inputpath.suffix != '.epub':
             raise ValueError('Expecting an epub file; Got: {}'.format(self.inputpath))
 
         if self.outputpath.exists():
-            raise FileExistsError()
+            raise FileExistsError('Path: {} already exists.'.format(self.outputpath))
         if self.outputpath.suffix != '.mobi':
             raise ValueError('Expecting an mobi file; Got: {}'.format(self.outputpath))
 

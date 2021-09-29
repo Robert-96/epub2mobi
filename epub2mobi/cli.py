@@ -1,7 +1,8 @@
 import os
 import enum
+import time
 import pathlib
-from concurrent.futures import as_completed, ThreadPoolExecutor
+from concurrent.futures import ThreadPoolExecutor
 
 import click
 from loguru import logger
@@ -13,6 +14,7 @@ from .convert import is_epub, epub2mobi
 console = Console(record=True)
 
 
+@enum.unique
 class Status(enum.Enum):
     PENDING = "[cyan][PENDING][/cyan]"
     RUNNING = "[purple][RUNNING][/purple]"
@@ -52,7 +54,8 @@ def convert_task(task, filepath, outputpath):
         task.update(Status.SUCCESSFUL)
         console.print(str(task))
     except Warning as ex:
-        pass
+        task.update(Status.WARNING)
+        console.print(str(task))
     except Exception as ex:
         task.update(Status.ERROR)
         console.print(str(task))
@@ -69,12 +72,15 @@ def convert_file(inputpath, outputpath=None):
 
 
 def convert_tree(inputpath, outputpath=None, max_workers=5):
+    console.clear()
     console.print('[green]Convert all epub files from [bold]{}[/bold] to mobi ...[/green]'.format(click.format_filename(inputpath, shorten=True)))
     console.print()
 
     index = 0
 
-    with ThreadPoolExecutor(max_workers=max_workers) as pool:
+    start = time.time()
+
+    with ThreadPoolExecutor(max_workers=None) as pool:
         for root, _, files in os.walk(inputpath, topdown=False):
             for filename in files:
                 filepath = pathlib.Path(root).joinpath(filename)
@@ -88,7 +94,9 @@ def convert_tree(inputpath, outputpath=None, max_workers=5):
                 mobipath = outputpath.joinpath(filename).with_suffix('.mobi') if outputpath else None
                 pool.submit(convert_task, task, filepath, mobipath)
 
+    end = time.time()
     console.print()
+    console.print('Elapsed time: {} seconds'.format(end - start))
     console.print('[green]DONE.[/green]')
     console.print()
 
